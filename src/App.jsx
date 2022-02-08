@@ -11,7 +11,7 @@ export const ACTIONS = {
     EVALUATE: 'evaluate',
 }
 
-let reducer = (state, { type, payload }) => {
+const reducer = (state, { type, payload }) => {
     // eslint-disable-next-line default-case
     switch (type) {
         case ACTIONS.ADD_DIGIT:
@@ -74,8 +74,7 @@ let reducer = (state, { type, payload }) => {
             if (
                 state.operation == null ||
                 state.currentOperand == null ||
-                state.previousOperand ||
-                null
+                state.previousOperand == null
             )
                 return state
 
@@ -89,11 +88,12 @@ let reducer = (state, { type, payload }) => {
     }
 }
 
-function evaluate({ currentOperand, previousOperand, operation }) {
+const evaluate = ({ currentOperand, previousOperand, operation }) => {
     const prev = parseFloat(previousOperand)
     const current = parseFloat(currentOperand)
     if (isNaN(prev) || isNaN(current)) return ''
     let computation = ''
+    // eslint-disable-next-line default-case
     switch (operation) {
         case '+':
             computation = prev + current
@@ -109,6 +109,17 @@ function evaluate({ currentOperand, previousOperand, operation }) {
             break
     }
     return computation.toString()
+}
+
+const INTEGER_FORMATTER = new Intl.NumberFormat('en-us', {
+    maximumFractionDigits: 0,
+})
+//TODO: fix the typing of the digits
+const formatOperand = (operand) => {
+    if (operand == null) return
+    const [integer, decimal] = operand.split('.')
+    if (decimal == null) return INTEGER_FORMATTER(integer)
+    return `${INTEGER_FORMATTER.format(integer)}.${decimal}`
 }
 
 function App() {
